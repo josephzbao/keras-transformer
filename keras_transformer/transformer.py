@@ -412,7 +412,12 @@ def get_model(token_num,
     )([decoded_layer, decoder_embed_weights])
     return keras.models.Model(inputs=[encoder_input, decoder_input], outputs=output_layer)
 
-def get_multi_output_model(token_num,
+def get_multi_output_model(encoder_token_num,
+                           decoder_token_num1,
+                           decoder_token_num2,
+                           decoder_token_num3,
+                           decoder_token_num4,
+                           decoder_token_num5,
               embed_dim,
               encoder_num,
               decoder_num,
@@ -426,7 +431,6 @@ def get_multi_output_model(token_num,
               embed_trainable=None,
               trainable=True):
     """Get full model without compilation.
-       :param token_num: Number of distinct tokens.
        :param embed_dim: Dimension of token embedding.
        :param encoder_num: Number of encoder components.
        :param decoder_num: Number of decoder components.
@@ -443,10 +447,6 @@ def get_multi_output_model(token_num,
        :param trainable: Whether the layers are trainable.
        :return: Keras model.
        """
-    if not isinstance(token_num, list):
-        token_num = [token_num, token_num]
-    encoder_token_num, decoder_token_num = token_num
-
     if not isinstance(embed_weights, list):
         embed_weights = [embed_weights, embed_weights]
     encoder_embed_weights, decoder_embed_weights = embed_weights
@@ -486,7 +486,7 @@ def get_multi_output_model(token_num,
             name='Encoder-Token-Embedding',
         )
         decoder_embed_layer1 = EmbeddingRet(
-            input_dim=decoder_token_num,
+            input_dim=decoder_token_num1,
             output_dim=embed_dim,
             mask_zero=True,
             weights=decoder_embed_weights1,
@@ -494,7 +494,7 @@ def get_multi_output_model(token_num,
             name='Decoder-Token-Embedding',
         )
         decoder_embed_layer2 = EmbeddingRet(
-            input_dim=decoder_token_num,
+            input_dim=decoder_token_num2,
             output_dim=embed_dim,
             mask_zero=True,
             weights=decoder_embed_weights2,
@@ -502,7 +502,7 @@ def get_multi_output_model(token_num,
             name='Decoder-Token-Embedding',
         )
         decoder_embed_layer3 = EmbeddingRet(
-            input_dim=decoder_token_num,
+            input_dim=decoder_token_num3,
             output_dim=embed_dim,
             mask_zero=True,
             weights=decoder_embed_weights3,
@@ -510,7 +510,7 @@ def get_multi_output_model(token_num,
             name='Decoder-Token-Embedding',
         )
         decoder_embed_layer4 = EmbeddingRet(
-            input_dim=decoder_token_num,
+            input_dim=decoder_token_num4,
             output_dim=embed_dim,
             mask_zero=True,
             weights=decoder_embed_weights4,
@@ -518,7 +518,7 @@ def get_multi_output_model(token_num,
             name='Decoder-Token-Embedding',
         )
         decoder_embed_layer5 = EmbeddingRet(
-            input_dim=decoder_token_num,
+            input_dim=decoder_token_num5,
             output_dim=embed_dim,
             mask_zero=True,
             weights=decoder_embed_weights5,
