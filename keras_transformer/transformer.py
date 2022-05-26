@@ -496,7 +496,7 @@ def get_multi_output_model(encoder_token_num,
             mask_zero=True,
             weights=decoder_embed_weights1,
             trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
+            name='Decoder-Token-Embedding1',
         )
         decoder_embed_layer2 = EmbeddingRet(
             input_dim=decoder_token_num2,
@@ -504,7 +504,7 @@ def get_multi_output_model(encoder_token_num,
             mask_zero=True,
             weights=decoder_embed_weights2,
             trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
+            name='Decoder-Token-Embedding2',
         )
         decoder_embed_layer3 = EmbeddingRet(
             input_dim=decoder_token_num3,
@@ -512,7 +512,7 @@ def get_multi_output_model(encoder_token_num,
             mask_zero=True,
             weights=decoder_embed_weights3,
             trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
+            name='Decoder-Token-Embedding3',
         )
         decoder_embed_layer4 = EmbeddingRet(
             input_dim=decoder_token_num4,
@@ -520,7 +520,7 @@ def get_multi_output_model(encoder_token_num,
             mask_zero=True,
             weights=decoder_embed_weights4,
             trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
+            name='Decoder-Token-Embedding4',
         )
         decoder_embed_layer5 = EmbeddingRet(
             input_dim=decoder_token_num5,
@@ -528,7 +528,7 @@ def get_multi_output_model(encoder_token_num,
             mask_zero=True,
             weights=decoder_embed_weights5,
             trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
+            name='Decoder-Token-Embedding5',
         )
     encoder_input = keras.layers.Input(shape=(None,), name='Encoder-Input')
     encoder_embed = TrigPosEmbedding(
