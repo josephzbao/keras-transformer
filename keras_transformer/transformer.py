@@ -571,6 +571,7 @@ def get_multi_output_model(encoder_token_num,
         dropout_rate=dropout_rate,
         trainable=trainable,
     )
+    decoded_layer = keras.layers.Dense(30, activation='relu')(decoded_layer)
     output_layer1 = EmbeddingSim(
         trainable=trainable,
         name='Decoder-Output1',
