@@ -427,7 +427,8 @@ def get_multi_output_model(encoder_token_num,
               feed_forward_activation=gelu,
               dropout_rate=0.0,
               use_same_embed=False,
-              embed_weights=None,
+              encoder_embed_weights=None,
+              decoder_embed_weights=None,
               embed_trainable=None,
               trainable=True):
     """Get full model without compilation.
@@ -447,25 +448,25 @@ def get_multi_output_model(encoder_token_num,
        :param trainable: Whether the layers are trainable.
        :return: Keras model.
        """
-    if not isinstance(embed_weights, list):
-        embed_weights = [embed_weights, embed_weights]
-    encoder_embed_weights, decoder_embed_weights = embed_weights
+    # if not isinstance(embed_weights, list):
+    #     embed_weights = [embed_weights, embed_weights]
+    # encoder_embed_weights, decoder_embed_weights = embed_weights
     if encoder_embed_weights is not None:
         encoder_embed_weights = [encoder_embed_weights]
     if decoder_embed_weights is not None:
-        decoder_embed_weights1 = copy.deepcopy(decoder_embed_weights)
-        decoder_embed_weights2 = copy.deepcopy(decoder_embed_weights)
-        decoder_embed_weights3 = copy.deepcopy(decoder_embed_weights)
-        decoder_embed_weights4 = copy.deepcopy(decoder_embed_weights)
-        decoder_embed_weights5 = copy.deepcopy(decoder_embed_weights)
+        decoder_embed_weights1 = [copy.deepcopy(decoder_embed_weights)]
+        decoder_embed_weights2 = [copy.deepcopy(decoder_embed_weights)]
+        decoder_embed_weights3 = [copy.deepcopy(decoder_embed_weights)]
+        decoder_embed_weights4 = [copy.deepcopy(decoder_embed_weights)]
+        decoder_embed_weights5 = [copy.deepcopy(decoder_embed_weights)]
 
     if not isinstance(embed_trainable, list):
         embed_trainable = [embed_trainable, embed_trainable]
     encoder_embed_trainable, decoder_embed_trainable = embed_trainable
     if encoder_embed_trainable is None:
-        encoder_embed_trainable = encoder_embed_weights is None
+        encoder_embed_trainable = True
     if decoder_embed_trainable is None:
-        decoder_embed_trainable = decoder_embed_weights is None
+        decoder_embed_trainable = True
 
     if use_same_embed:
         encoder_embed_layer = decoder_embed_layer1 = decoder_embed_layer2 = decoder_embed_layer3 = decoder_embed_layer4 = decoder_embed_layer5 = EmbeddingRet(
