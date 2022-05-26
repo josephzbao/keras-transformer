@@ -775,6 +775,10 @@ def decode(model,
                 batch_outputs.append(decoder_inputs[i])
                 max_input_len = max(max_input_len, len(tokens[i]))
         for i in range(len(batch_inputs)):
+            print(len(batch_inputs))
+            print(len(batch_inputs[0]))
+            print(batch_inputs[0])
+            print(pad_token)
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
         predicts = model.predict([np.array(batch_inputs), np.array(batch_outputs)])
         for i in range(len(predicts)):
