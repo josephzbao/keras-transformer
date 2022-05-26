@@ -550,7 +550,7 @@ def get_multi_output_model(encoder_token_num,
     decoder_embed3, decoder_embed_weights3 = decoder_embed_layer3(decoder_input3)
     decoder_embed4, decoder_embed_weights4 = decoder_embed_layer4(decoder_input4)
     decoder_embed5, decoder_embed_weights5 = decoder_embed_layer5(decoder_input5)
-    decoder_embed = keras.layers.Concatenate([decoder_embed1, decoder_embed2, decoder_embed3, decoder_embed4, decoder_embed5])
+    decoder_embed = keras.layers.concatenate([decoder_embed1, decoder_embed2, decoder_embed3, decoder_embed4, decoder_embed5])
     decoder_embed = TrigPosEmbedding(
         mode=TrigPosEmbedding.MODE_ADD,
         name='Decoder-Embedding',
