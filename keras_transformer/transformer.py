@@ -545,11 +545,11 @@ def get_multi_output_model(encoder_token_num,
         dropout_rate=dropout_rate,
         trainable=trainable,
     )
-    decoder_input1 = keras.layers.Input(shape=(None,), name='Decoder-Input')
-    decoder_input2 = keras.layers.Input(shape=(None,), name='Decoder-Input')
-    decoder_input3 = keras.layers.Input(shape=(None,), name='Decoder-Input')
-    decoder_input4 = keras.layers.Input(shape=(None,), name='Decoder-Input')
-    decoder_input5 = keras.layers.Input(shape=(None,), name='Decoder-Input')
+    decoder_input1 = keras.layers.Input(shape=(None,), name='Decoder-Input1')
+    decoder_input2 = keras.layers.Input(shape=(None,), name='Decoder-Input2')
+    decoder_input3 = keras.layers.Input(shape=(None,), name='Decoder-Input3')
+    decoder_input4 = keras.layers.Input(shape=(None,), name='Decoder-Input4')
+    decoder_input5 = keras.layers.Input(shape=(None,), name='Decoder-Input5')
     decoder_embed1, decoder_embed_weights1 = decoder_embed_layer1(decoder_input1)
     decoder_embed2, decoder_embed_weights2 = decoder_embed_layer2(decoder_input2)
     decoder_embed3, decoder_embed_weights3 = decoder_embed_layer3(decoder_input3)
