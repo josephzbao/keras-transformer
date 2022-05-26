@@ -14,7 +14,7 @@ from .gelu import gelu
 
 __all__ = [
     'get_custom_objects', 'get_encoders', 'get_decoders', 'get_model', 'decode',
-    'attention_builder', 'feed_forward_builder', 'get_encoder_component', 'get_decoder_component',
+    'attention_builder', 'feed_forward_builder', 'get_encoder_component', 'get_decoder_component', 'get_multi_output_model'
 ]
 
 
