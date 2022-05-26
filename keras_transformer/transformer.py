@@ -426,7 +426,7 @@ def get_multi_output_model(encoder_token_num,
               attention_activation=None,
               feed_forward_activation=gelu,
               dropout_rate=0.0,
-              use_same_embed=True,
+              use_same_embed=False,
               embed_weights=None,
               embed_trainable=None,
               trainable=True):
