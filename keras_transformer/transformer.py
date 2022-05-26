@@ -479,7 +479,7 @@ def get_multi_output_model(encoder_token_num,
     else:
         encoder_embed_layer = EmbeddingRet(
             input_dim=encoder_token_num,
-            output_dim=embed_dim,
+            output_dim=embed_dim * 5,
             mask_zero=True,
             weights=encoder_embed_weights,
             trainable=encoder_embed_trainable,
