@@ -428,7 +428,11 @@ def get_multi_output_model(encoder_token_num,
               dropout_rate=0.0,
               use_same_embed=False,
               encoder_embed_weights=None,
-              decoder_embed_weights=None,
+              decoder_embed_weights1=None,
+              decoder_embed_weights2=None,
+              decoder_embed_weights3=None,
+              decoder_embed_weights4=None,
+              decoder_embed_weights5=None,
               embed_trainable=None,
               trainable=True):
     """Get full model without compilation.
@@ -453,12 +457,12 @@ def get_multi_output_model(encoder_token_num,
     # encoder_embed_weights, decoder_embed_weights = embed_weights
     if encoder_embed_weights is not None:
         encoder_embed_weights = [encoder_embed_weights]
-    if decoder_embed_weights is not None:
-        decoder_embed_weights1 = [copy.deepcopy(decoder_embed_weights)]
-        decoder_embed_weights2 = [copy.deepcopy(decoder_embed_weights)]
-        decoder_embed_weights3 = [copy.deepcopy(decoder_embed_weights)]
-        decoder_embed_weights4 = [copy.deepcopy(decoder_embed_weights)]
-        decoder_embed_weights5 = [copy.deepcopy(decoder_embed_weights)]
+    if decoder_embed_weights1 is not None:
+        decoder_embed_weights1 = [decoder_embed_weights1]
+        decoder_embed_weights2 = [decoder_embed_weights2]
+        decoder_embed_weights3 = [decoder_embed_weights3]
+        decoder_embed_weights4 = [decoder_embed_weights4]
+        decoder_embed_weights5 = [decoder_embed_weights5]
 
     if not isinstance(embed_trainable, list):
         embed_trainable = [embed_trainable, embed_trainable]
