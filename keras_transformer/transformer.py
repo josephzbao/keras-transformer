@@ -758,7 +758,7 @@ def decode(model,
     if is_single:
         tokens = [tokens]
     batch_size = len(tokens)
-    print("batch_size is: " + batch_size)
+    print("batch_size is: " + str(batch_size))
     decoder_inputs0 = [[start_token] for _ in range(batch_size)]
     decoder_inputs1 = [[start_token] for _ in range(batch_size)]
     decoder_inputs2 = [[start_token] for _ in range(batch_size)]
