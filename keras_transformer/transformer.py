@@ -805,7 +805,7 @@ def decode(model,
         print("batch outputs4")
         print(batch_outputs4)
         print(batch_outputs4[0])
-        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.asarray(batch_inputs[0]), np.asarray(batch_outputs0[0]), np.asarray(batch_outputs1[0]), np.asarray(batch_outputs2[0]), np.asarray(batch_outputs3[0]), np.asarray(batch_outputs4[0])])
+        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.asarray(batch_inputs[0]), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4)])
         for i in range(len(predicts0)):
             # if top_k == 1:
             last_token0 = predicts0[i][-1].argmax(axis=-1)
