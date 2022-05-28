@@ -775,12 +775,12 @@ def decode(model,
         for i in range(batch_size):
             if outputs0[i] is None:
                 index_map[len(batch_inputs)] = i
-                batch_inputs.append(tokens[i][:])
-                batch_outputs0.append(decoder_inputs0[i])
-                batch_outputs1.append(decoder_inputs1[i])
-                batch_outputs2.append(decoder_inputs2[i])
-                batch_outputs3.append(decoder_inputs3[i])
-                batch_outputs4.append(decoder_inputs4[i])
+                batch_inputs.append(list(tokens[i][:]))
+                batch_outputs0.append(list(decoder_inputs0[i]))
+                batch_outputs1.append(list(decoder_inputs1[i]))
+                batch_outputs2.append(list(decoder_inputs2[i]))
+                batch_outputs3.append(list(decoder_inputs3[i]))
+                batch_outputs4.append(list(decoder_inputs4[i]))
                 max_input_len = max(max_input_len, len(tokens[i]))
         print("batch inputs")
         print(batch_inputs)
