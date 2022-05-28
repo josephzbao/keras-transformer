@@ -737,8 +737,6 @@ def decode(model,
            start_token,
            end_token,
            pad_token,
-           top_k=1,
-           temperature=1.0,
            max_len=10000,
            max_repeat=10,
            max_repeat_block=10):
@@ -760,46 +758,70 @@ def decode(model,
     if is_single:
         tokens = [tokens]
     batch_size = len(tokens)
-    decoder_inputs = [[start_token] for _ in range(batch_size)]
-    outputs = [None for _ in range(batch_size)]
+    decoder_inputs0 = [[start_token] for _ in range(batch_size)]
+    decoder_inputs1 = [[start_token] for _ in range(batch_size)]
+    decoder_inputs2 = [[start_token] for _ in range(batch_size)]
+    decoder_inputs3 = [[start_token] for _ in range(batch_size)]
+    decoder_inputs4 = [[start_token] for _ in range(batch_size)]
+    outputs0 = [None for _ in range(batch_size)]
+    outputs1 = [None for _ in range(batch_size)]
+    outputs2 = [None for _ in range(batch_size)]
+    outputs3 = [None for _ in range(batch_size)]
+    outputs4 = [None for _ in range(batch_size)]
     output_len = 1
-    while len(list(filter(lambda x: x is None, outputs))) > 0:
+    while len(list(filter(lambda x: x is None, outputs0))) > 0:
         output_len += 1
-        batch_inputs, batch_outputs = [], []
+        batch_inputs, batch_outputs0, batch_outputs1, batch_outputs2, batch_outputs3, batch_outputs4 = [], [], [], [], [], []
         max_input_len = 0
         index_map = {}
         for i in range(batch_size):
-            if outputs[i] is None:
+            if outputs0[i] is None:
                 index_map[len(batch_inputs)] = i
                 batch_inputs.append(tokens[i][:])
-                batch_outputs.append(decoder_inputs[i])
+                batch_outputs0.append(decoder_inputs0[i])
+                batch_outputs1.append(decoder_inputs1[i])
+                batch_outputs2.append(decoder_inputs2[i])
+                batch_outputs3.append(decoder_inputs3[i])
+                batch_outputs4.append(decoder_inputs4[i])
                 max_input_len = max(max_input_len, len(tokens[i]))
         for i in range(len(batch_inputs)):
-            print(len(batch_inputs))
-            print(len(batch_inputs[0]))
-            print(batch_inputs[0])
-            print(pad_token)
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
-        predicts = model.predict([np.array(batch_inputs), np.array(batch_outputs)])
-        for i in range(len(predicts)):
-            if top_k == 1:
-                last_token = predicts[i][-1].argmax(axis=-1)
-            else:
-                probs = [(prob, j) for j, prob in enumerate(predicts[i][-1])]
-                probs.sort(reverse=True)
-                probs = probs[:top_k]
-                indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
-                probs = np.array(probs) / temperature
-                probs = probs - np.max(probs)
-                probs = np.exp(probs)
-                probs = probs / np.sum(probs)
-                last_token = np.random.choice(indices, p=probs)
-            decoder_inputs[index_map[i]].append(last_token)
-            if last_token == end_token or\
+        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.array(batch_inputs), np.array(batch_outputs0), np.array(batch_outputs1), np.array(batch_outputs2), np.array(batch_outputs3), np.array(batch_outputs4)])
+        for i in range(len(predicts0)):
+            # if top_k == 1:
+            last_token0 = predicts0[i][-1].argmax(axis=-1)
+            last_token1 = predicts1[i][-1].argmax(axis=-1)
+            last_token2 = predicts2[i][-1].argmax(axis=-1)
+            last_token3 = predicts3[i][-1].argmax(axis=-1)
+            last_token4 = predicts4[i][-1].argmax(axis=-1)
+            # else:
+            #     probs = [(prob, j) for j, prob in enumerate(predicts[i][-1])]
+            #     probs.sort(reverse=True)
+            #     probs = probs[:top_k]
+            #     indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
+            #     probs = np.array(probs) / temperature
+            #     probs = probs - np.max(probs)
+            #     probs = np.exp(probs)
+            #     probs = probs / np.sum(probs)
+            #     last_token = np.random.choice(indices, p=probs)
+            decoder_inputs0[index_map[i]].append(last_token0)
+            decoder_inputs1[index_map[i]].append(last_token1)
+            decoder_inputs2[index_map[i]].append(last_token2)
+            decoder_inputs3[index_map[i]].append(last_token3)
+            decoder_inputs4[index_map[i]].append(last_token4)
+            if last_token0 == end_token or\
                     (max_len is not None and output_len >= max_len) or\
-                    _get_max_suffix_repeat_times(decoder_inputs[index_map[i]],
+                    _get_max_suffix_repeat_times(decoder_inputs0[index_map[i]],
                                                  max_repeat * max_repeat_block) >= max_repeat:
-                outputs[index_map[i]] = decoder_inputs[index_map[i]]
+                outputs0[index_map[i]] = decoder_inputs0[index_map[i]]
+                outputs1[index_map[i]] = decoder_inputs1[index_map[i]]
+                outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
+                outputs3[index_map[i]] = decoder_inputs3[index_map[i]]
+                outputs4[index_map[i]] = decoder_inputs4[index_map[i]]
     if is_single:
-        outputs = outputs[0]
-    return outputs
+        outputs0 = outputs0[0]
+        outputs1 = outputs1[0]
+        outputs2 = outputs2[0]
+        outputs3 = outputs3[0]
+        outputs4 = outputs4[0]
+    return outputs0, outputs1, outputs2, outputs3, outputs4
