@@ -837,10 +837,10 @@ def decode(model,
                 outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
                 outputs3[index_map[i]] = decoder_inputs3[index_map[i]]
                 outputs4[index_map[i]] = decoder_inputs4[index_map[i]]
-    if is_single:
-        outputs0 = outputs0[0]
-        outputs1 = outputs1[0]
-        outputs2 = outputs2[0]
-        outputs3 = outputs3[0]
-        outputs4 = outputs4[0]
+    # if is_single:
+    #     outputs0 = outputs0[0]
+    #     outputs1 = outputs1[0]
+    #     outputs2 = outputs2[0]
+    #     outputs3 = outputs3[0]
+    #     outputs4 = outputs4[0]
     return outputs0, outputs1, outputs2, outputs3, outputs4
