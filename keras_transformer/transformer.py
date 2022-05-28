@@ -782,6 +782,9 @@ def decode(model,
                 batch_outputs3.append(decoder_inputs3[i])
                 batch_outputs4.append(decoder_inputs4[i])
                 max_input_len = max(max_input_len, len(tokens[i]))
+        print("batch inputs")
+        print(batch_inputs)
+        print(batch_inputs[0])
         for i in range(len(batch_inputs)):
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
         print("batch inputs")
