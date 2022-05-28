@@ -758,6 +758,7 @@ def decode(model,
     if is_single:
         tokens = [tokens]
     batch_size = len(tokens)
+    print("batch_size is: " + batch_size)
     decoder_inputs0 = [[start_token] for _ in range(batch_size)]
     decoder_inputs1 = [[start_token] for _ in range(batch_size)]
     decoder_inputs2 = [[start_token] for _ in range(batch_size)]
@@ -786,7 +787,10 @@ def decode(model,
                 max_input_len = max(max_input_len, len(tokens[i]))
         for i in range(len(batch_inputs)):
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
-        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.array(batch_inputs), np.array(batch_outputs0), np.array(batch_outputs1), np.array(batch_outputs2), np.array(batch_outputs3), np.array(batch_outputs4)])
+        print("batch inputs")
+        print(batch_inputs[0])
+        print(batch_inputs)
+        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4)])
         for i in range(len(predicts0)):
             # if top_k == 1:
             last_token0 = predicts0[i][-1].argmax(axis=-1)
