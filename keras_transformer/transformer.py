@@ -754,9 +754,6 @@ def decode(model,
     :param max_repeat_block: Maximum length of the repeating block.
     :return: Decoded tokens.
     """
-    is_single = not isinstance(tokens[0], list)
-    if is_single:
-        tokens = [tokens]
     batch_size = len(tokens)
     print("batch_size is: " + str(batch_size))
     decoder_inputs0 = [[start_token] for _ in range(batch_size)]
