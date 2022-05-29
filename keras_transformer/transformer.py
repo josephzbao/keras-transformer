@@ -828,10 +828,7 @@ def decode(model,
             decoder_inputs2[index_map[i]].append(last_token2)
             decoder_inputs3[index_map[i]].append(last_token3)
             decoder_inputs4[index_map[i]].append(last_token4)
-            if last_token0 == end_token or\
-                    (max_len is not None and output_len >= max_len) or\
-                    _get_max_suffix_repeat_times(decoder_inputs0[index_map[i]],
-                                                 max_repeat * max_repeat_block) >= max_repeat:
+            if (max_len is not None and output_len >= max_len):
                 outputs0[index_map[i]] = decoder_inputs0[index_map[i]]
                 outputs1[index_map[i]] = decoder_inputs1[index_map[i]]
                 outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
