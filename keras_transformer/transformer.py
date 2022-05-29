@@ -840,7 +840,7 @@ def decode(model,
             decoder_inputs2[index_map[i]].append(last_tokens[2])
             decoder_inputs3[index_map[i]].append(last_tokens[3])
             decoder_inputs4[index_map[i]].append(last_tokens[4])
-            if (max_len is not None and output_len >= 20):
+            if (output_len >= 20):
                 outputs0[index_map[i]] = decoder_inputs0[index_map[i]]
                 outputs1[index_map[i]] = decoder_inputs1[index_map[i]]
                 outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
