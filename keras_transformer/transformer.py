@@ -812,13 +812,15 @@ def decode(model,
                 probs = [(prob, j) for j, prob in enumerate(predicts[j][i][-1])]
                 probs.sort(reverse=True)
                 probs = probs[:4]
-                probs = list(filter(lambda x: x != 0 and x != 1 and x != 2, probs))
                 indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
                 probs = np.array(probs)
                 probs = probs - np.max(probs)
                 probs = np.exp(probs)
                 probs = probs / np.sum(probs)
-                last_tokens[j] = np.random.choice(indices, p=probs)
+                last_token = None
+                while (last_token is None or last_token == 0 or last_token == 1 or last_token == 2):
+                    last_token = np.random.choice(indices, p=probs)
+                last_tokens[j] = last_token
             # if top_k == 1:
             # last_token0 = predicts0[i][-1].argmax(axis=-1)
             # last_token1 = predicts1[i][-1].argmax(axis=-1)
