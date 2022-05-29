@@ -805,14 +805,26 @@ def decode(model,
         print("batch outputs4")
         print(batch_outputs4)
         print(batch_outputs4[0])
-        (predicts0, predicts1, predicts2, predicts3, predicts4) = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4)])
-        for i in range(len(predicts0)):
+        predicts = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4)])
+        for i in range(len(predicts[0])):
+            last_tokens = [None, None, None, None, None]
+            for j in range(5):
+                probs = [(prob, j) for j, prob in enumerate(predicts[j][i][-1])]
+                probs.sort(reverse=True)
+                probs = probs[:4]
+                probs = list(filter(lambda x: x != 0 and x != 1 and x != 2, probs))
+                indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
+                probs = np.array(probs)
+                probs = probs - np.max(probs)
+                probs = np.exp(probs)
+                probs = probs / np.sum(probs)
+                last_tokens[j] = np.random.choice(indices, p=probs)
             # if top_k == 1:
-            last_token0 = predicts0[i][-1].argmax(axis=-1)
-            last_token1 = predicts1[i][-1].argmax(axis=-1)
-            last_token2 = predicts2[i][-1].argmax(axis=-1)
-            last_token3 = predicts3[i][-1].argmax(axis=-1)
-            last_token4 = predicts4[i][-1].argmax(axis=-1)
+            # last_token0 = predicts0[i][-1].argmax(axis=-1)
+            # last_token1 = predicts1[i][-1].argmax(axis=-1)
+            # last_token2 = predicts2[i][-1].argmax(axis=-1)
+            # last_token3 = predicts3[i][-1].argmax(axis=-1)
+            # last_token4 = predicts4[i][-1].argmax(axis=-1)
             # else:
             #     probs = [(prob, j) for j, prob in enumerate(predicts[i][-1])]
             #     probs.sort(reverse=True)
@@ -823,12 +835,12 @@ def decode(model,
             #     probs = np.exp(probs)
             #     probs = probs / np.sum(probs)
             #     last_token = np.random.choice(indices, p=probs)
-            decoder_inputs0[index_map[i]].append(last_token0)
-            decoder_inputs1[index_map[i]].append(last_token1)
-            decoder_inputs2[index_map[i]].append(last_token2)
-            decoder_inputs3[index_map[i]].append(last_token3)
-            decoder_inputs4[index_map[i]].append(last_token4)
-            if (max_len is not None and output_len >= max_len):
+            decoder_inputs0[index_map[i]].append(last_tokens[0])
+            decoder_inputs1[index_map[i]].append(last_tokens[1])
+            decoder_inputs2[index_map[i]].append(last_tokens[2])
+            decoder_inputs3[index_map[i]].append(last_tokens[3])
+            decoder_inputs4[index_map[i]].append(last_tokens[4])
+            if (max_len is not None and output_len >= 20):
                 outputs0[index_map[i]] = decoder_inputs0[index_map[i]]
                 outputs1[index_map[i]] = decoder_inputs1[index_map[i]]
                 outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
