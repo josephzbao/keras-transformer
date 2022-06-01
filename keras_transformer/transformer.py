@@ -418,6 +418,7 @@ def get_multi_output_model(encoder_token_num,
                            decoder_token_num3,
                            decoder_token_num4,
                            decoder_token_num5,
+                           decoder_token_num6,
               embed_dim,
               encoder_num,
               decoder_num,
@@ -433,6 +434,7 @@ def get_multi_output_model(encoder_token_num,
               decoder_embed_weights3=None,
               decoder_embed_weights4=None,
               decoder_embed_weights5=None,
+              decoder_embed_weights6=None,
               embed_trainable=None,
               trainable=True):
     """Get full model without compilation.
@@ -463,6 +465,7 @@ def get_multi_output_model(encoder_token_num,
         decoder_embed_weights3 = [decoder_embed_weights3]
         decoder_embed_weights4 = [decoder_embed_weights4]
         decoder_embed_weights5 = [decoder_embed_weights5]
+        decoder_embed_weights6 = [decoder_embed_weights6]
 
     if not isinstance(embed_trainable, list):
         embed_trainable = [embed_trainable, embed_trainable]
@@ -473,7 +476,7 @@ def get_multi_output_model(encoder_token_num,
         decoder_embed_trainable = True
 
     if use_same_embed:
-        encoder_embed_layer = decoder_embed_layer1 = decoder_embed_layer2 = decoder_embed_layer3 = decoder_embed_layer4 = decoder_embed_layer5 = EmbeddingRet(
+        encoder_embed_layer = decoder_embed_layer1 = decoder_embed_layer2 = decoder_embed_layer3 = decoder_embed_layer4 = decoder_embed_layer5 = decoder_embed_layer6 = EmbeddingRet(
             input_dim=encoder_token_num,
             output_dim=embed_dim,
             mask_zero=True,
@@ -484,7 +487,7 @@ def get_multi_output_model(encoder_token_num,
     else:
         encoder_embed_layer = EmbeddingRet(
             input_dim=encoder_token_num,
-            output_dim=embed_dim * 5,
+            output_dim=embed_dim * 6,
             mask_zero=True,
             weights=encoder_embed_weights,
             trainable=encoder_embed_trainable,
@@ -530,6 +533,14 @@ def get_multi_output_model(encoder_token_num,
             trainable=decoder_embed_trainable,
             name='Decoder-Token-Embedding5',
         )
+        decoder_embed_layer6 = EmbeddingRet(
+            input_dim=decoder_token_num6,
+            output_dim=embed_dim,
+            mask_zero=True,
+            weights=decoder_embed_weights6,
+            trainable=decoder_embed_trainable,
+            name='Decoder-Token-Embedding6',
+        )
     encoder_input = keras.layers.Input(shape=(None,), name='Encoder-Input')
     encoder_embed = TrigPosEmbedding(
         mode=TrigPosEmbedding.MODE_ADD,
@@ -550,12 +561,14 @@ def get_multi_output_model(encoder_token_num,
     decoder_input3 = keras.layers.Input(shape=(None,), name='Decoder-Input3')
     decoder_input4 = keras.layers.Input(shape=(None,), name='Decoder-Input4')
     decoder_input5 = keras.layers.Input(shape=(None,), name='Decoder-Input5')
+    decoder_input6 = keras.layers.Input(shape=(None,), name='Decoder-Input6')
     decoder_embed1, decoder_embed_weights1 = decoder_embed_layer1(decoder_input1)
     decoder_embed2, decoder_embed_weights2 = decoder_embed_layer2(decoder_input2)
     decoder_embed3, decoder_embed_weights3 = decoder_embed_layer3(decoder_input3)
     decoder_embed4, decoder_embed_weights4 = decoder_embed_layer4(decoder_input4)
     decoder_embed5, decoder_embed_weights5 = decoder_embed_layer5(decoder_input5)
-    decoder_embed = keras.layers.concatenate([decoder_embed1, decoder_embed2, decoder_embed3, decoder_embed4, decoder_embed5])
+    decoder_embed6, decoder_embed_weights6 = decoder_embed_layer6(decoder_input6)
+    decoder_embed = keras.layers.concatenate([decoder_embed1, decoder_embed2, decoder_embed3, decoder_embed4, decoder_embed5, decoder_embed6])
     decoder_embed = TrigPosEmbedding(
         mode=TrigPosEmbedding.MODE_ADD,
         name='Decoder-Embedding',
@@ -592,128 +605,11 @@ def get_multi_output_model(encoder_token_num,
         trainable=trainable,
         name='Decoder-Output5',
     )([decoded_layer, decoder_embed_weights5])
-    return keras.models.Model(inputs=[encoder_input, decoder_input1, decoder_input2, decoder_input3, decoder_input4, decoder_input5], outputs=[output_layer1, output_layer2, output_layer3, output_layer4, output_layer5])
-
-
-def get_multi_input_model(token_num,
-              embed_dim,
-              encoder_num,
-              decoder_num,
-              head_num,
-              hidden_dim,
-              attention_activation=None,
-              feed_forward_activation=gelu,
-              dropout_rate=0.0,
-              use_same_embed=True,
-              embed_weights=None,
-              embed_trainable=None,
-              trainable=True,
-              extra_dimensions=1):
-    """Get full model without compilation.
-
-    :param token_num: Number of distinct tokens.
-    :param embed_dim: Dimension of token embedding.
-    :param encoder_num: Number of encoder components.
-    :param decoder_num: Number of decoder components.
-    :param head_num: Number of heads in multi-head self-attention.
-    :param hidden_dim: Hidden dimension of feed forward layer.
-    :param attention_activation: Activation for multi-head self-attention.
-    :param feed_forward_activation: Activation for feed-forward layer.
-    :param dropout_rate: Dropout rate.
-    :param use_same_embed: Whether to use the same token embedding layer. `token_num`, `embed_weights` and
-                           `embed_trainable` should be lists of two elements if it is False.
-    :param embed_weights: Initial weights of token embedding.
-    :param embed_trainable: Whether the token embedding is trainable. It will automatically set to False if the given
-                            value is None when embedding weights has been provided.
-    :param trainable: Whether the layers are trainable.
-    :return: Keras model.
-    """
-    if not isinstance(token_num, list):
-        token_num = [token_num, token_num]
-    encoder_token_num, decoder_token_num = token_num
-
-    if not isinstance(embed_weights, list):
-        embed_weights = [embed_weights, embed_weights]
-    encoder_embed_weights, decoder_embed_weights = embed_weights
-    if encoder_embed_weights is not None:
-        encoder_embed_weights = [encoder_embed_weights]
-    if decoder_embed_weights is not None:
-        decoder_embed_weights = [decoder_embed_weights]
-
-    if not isinstance(embed_trainable, list):
-        embed_trainable = [embed_trainable, embed_trainable]
-    encoder_embed_trainable, decoder_embed_trainable = embed_trainable
-    if encoder_embed_trainable is None:
-        encoder_embed_trainable = encoder_embed_weights is None
-    if decoder_embed_trainable is None:
-        decoder_embed_trainable = decoder_embed_weights is None
-
-    if use_same_embed:
-        encoder_embed_layer = decoder_embed_layer = EmbeddingRet(
-            input_dim=encoder_token_num,
-            output_dim=embed_dim,
-            mask_zero=True,
-            weights=encoder_embed_weights,
-            trainable=encoder_embed_trainable,
-            name='Token-Embedding',
-        )
-    else:
-        encoder_embed_layer = EmbeddingRet(
-            input_dim=encoder_token_num,
-            output_dim=embed_dim,
-            mask_zero=True,
-            weights=encoder_embed_weights,
-            trainable=encoder_embed_trainable,
-            name='Encoder-Token-Embedding',
-        )
-        decoder_embed_layer = EmbeddingRet(
-            input_dim=decoder_token_num,
-            output_dim=embed_dim,
-            mask_zero=True,
-            weights=decoder_embed_weights,
-            trainable=decoder_embed_trainable,
-            name='Decoder-Token-Embedding',
-        )
-    encoder_input = keras.layers.Input(shape=(None,(1+extra_dimensions)), name='Encoder-Input')
-    extra_features = keras.layers.Lambda(lambda x: x[:,:1])(encoder_input)
-    encoder_embed = TrigPosEmbedding(
-        mode=TrigPosEmbedding.MODE_ADD,
-        name='Encoder-Embedding',
-    )(encoder_embed_layer(tf.squeeze(keras.layers.Lambda(lambda x: x[:,:1])(encoder_input)))[0])
-    encoder_embed = tf.keras.layers.Concatenate(axis=1)([encoder_embed, extra_features])
-    encoded_layer = get_encoders(
-        encoder_num=encoder_num,
-        input_layer=encoder_embed,
-        head_num=head_num,
-        hidden_dim=hidden_dim,
-        attention_activation=attention_activation,
-        feed_forward_activation=feed_forward_activation,
-        dropout_rate=dropout_rate,
+    output_layer6 = EmbeddingSim(
         trainable=trainable,
-    )
-    decoder_input = keras.layers.Input(shape=(None,), name='Decoder-Input')
-    decoder_embed, decoder_embed_weights = decoder_embed_layer(decoder_input)
-    decoder_embed = TrigPosEmbedding(
-        mode=TrigPosEmbedding.MODE_ADD,
-        name='Decoder-Embedding',
-    )(decoder_embed)
-    decoded_layer = get_decoders(
-        decoder_num=decoder_num,
-        input_layer=decoder_embed,
-        encoded_layer=encoded_layer,
-        head_num=head_num,
-        hidden_dim=hidden_dim,
-        attention_activation=attention_activation,
-        feed_forward_activation=feed_forward_activation,
-        dropout_rate=dropout_rate,
-        trainable=trainable,
-    )
-    output_layer = EmbeddingSim(
-        trainable=trainable,
-        name='Decoder-Output',
-    )([decoded_layer, decoder_embed_weights])
-    return keras.models.Model(inputs=[encoder_input, decoder_input], outputs=output_layer)
-
+        name='Decoder-Output6',
+    )([decoded_layer, decoder_embed_weights6])
+    return keras.models.Model(inputs=[encoder_input, decoder_input1, decoder_input2, decoder_input3, decoder_input4, decoder_input5, decoder_input6], outputs=[output_layer1, output_layer2, output_layer3, output_layer4, output_layer5, output_layer6])
 
 def _get_max_suffix_repeat_times(tokens, max_len):
     detect_len = min(max_len, len(tokens))
@@ -736,10 +632,7 @@ def decode(model,
            tokens,
            start_token,
            end_token,
-           pad_token,
-           max_len=10000,
-           max_repeat=10,
-           max_repeat_block=10):
+           pad_token,):
     """Decode with the given model and input tokens.
 
     :param model: The trained model.
@@ -747,11 +640,6 @@ def decode(model,
     :param start_token: The token that represents the start of a sentence.
     :param end_token: The token that represents the end of a sentence.
     :param pad_token: The token that represents padding.
-    :param top_k: Choose the last token from top K.
-    :param temperature: Randomness in boltzmann distribution.
-    :param max_len: Maximum length of decoded list.
-    :param max_repeat: Maximum number of repeating blocks.
-    :param max_repeat_block: Maximum length of the repeating block.
     :return: Decoded tokens.
     """
     batch_size = len(tokens)
@@ -761,15 +649,17 @@ def decode(model,
     decoder_inputs2 = [[start_token] for _ in range(batch_size)]
     decoder_inputs3 = [[start_token] for _ in range(batch_size)]
     decoder_inputs4 = [[start_token] for _ in range(batch_size)]
+    decoder_inputs5 = [[start_token] for _ in range(batch_size)]
     outputs0 = [None for _ in range(batch_size)]
     outputs1 = [None for _ in range(batch_size)]
     outputs2 = [None for _ in range(batch_size)]
     outputs3 = [None for _ in range(batch_size)]
     outputs4 = [None for _ in range(batch_size)]
+    outputs5 = [None for _ in range(batch_size)]
     output_len = 1
     while len(list(filter(lambda x: x is None, outputs0))) > 0:
         output_len += 1
-        batch_inputs, batch_outputs0, batch_outputs1, batch_outputs2, batch_outputs3, batch_outputs4 = [], [], [], [], [], []
+        batch_inputs, batch_outputs0, batch_outputs1, batch_outputs2, batch_outputs3, batch_outputs4, batch_outputs5 = [], [], [], [], [], [], []
         max_input_len = 0
         index_map = {}
         for i in range(batch_size):
@@ -781,34 +671,14 @@ def decode(model,
                 batch_outputs2.append(list(decoder_inputs2[i]))
                 batch_outputs3.append(list(decoder_inputs3[i]))
                 batch_outputs4.append(list(decoder_inputs4[i]))
+                batch_outputs5.append(list(decoder_inputs5[i]))
                 max_input_len = max(max_input_len, len(tokens[i]))
-        print("batch inputs")
-        print(batch_inputs)
-        print(batch_inputs[0])
         for i in range(len(batch_inputs)):
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
-        print("batch inputs")
-        print(batch_inputs)
-        print(batch_inputs[0])
-        print("batch outputs0")
-        print(batch_outputs0)
-        print(batch_outputs0[0])
-        print("batch outputs1")
-        print(batch_outputs1)
-        print(batch_outputs1[0])
-        print("batch outputs2")
-        print(batch_outputs2)
-        print(batch_outputs2[0])
-        print("batch outputs3")
-        print(batch_outputs3)
-        print(batch_outputs3[0])
-        print("batch outputs4")
-        print(batch_outputs4)
-        print(batch_outputs4[0])
-        predicts = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4)])
+        predicts = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4), np.asarray(batch_outputs5)])
         for i in range(len(predicts[0])):
             last_tokens = [None, None, None, None, None]
-            for j in range(5):
+            for j in range(6):
                 probs = [(prob, j) for j, prob in enumerate(predicts[j][i][-1])]
                 probs.sort(reverse=True)
                 probs = probs[:4]
@@ -818,40 +688,20 @@ def decode(model,
                 probs = np.exp(probs)
                 probs = probs / np.sum(probs)
                 last_token = None
-                while (last_token is None or last_token == 0 or last_token == 1 or last_token == 2):
+                while (last_token is None or last_token == start_token or last_token == end_token or last_token == pad_token):
                     last_token = np.random.choice(indices, p=probs)
                 last_tokens[j] = last_token
-            # if top_k == 1:
-            # last_token0 = predicts0[i][-1].argmax(axis=-1)
-            # last_token1 = predicts1[i][-1].argmax(axis=-1)
-            # last_token2 = predicts2[i][-1].argmax(axis=-1)
-            # last_token3 = predicts3[i][-1].argmax(axis=-1)
-            # last_token4 = predicts4[i][-1].argmax(axis=-1)
-            # else:
-            #     probs = [(prob, j) for j, prob in enumerate(predicts[i][-1])]
-            #     probs.sort(reverse=True)
-            #     probs = probs[:top_k]
-            #     indices, probs = list(map(lambda x: x[1], probs)), list(map(lambda x: x[0], probs))
-            #     probs = np.array(probs) / temperature
-            #     probs = probs - np.max(probs)
-            #     probs = np.exp(probs)
-            #     probs = probs / np.sum(probs)
-            #     last_token = np.random.choice(indices, p=probs)
             decoder_inputs0[index_map[i]].append(last_tokens[0])
             decoder_inputs1[index_map[i]].append(last_tokens[1])
             decoder_inputs2[index_map[i]].append(last_tokens[2])
             decoder_inputs3[index_map[i]].append(last_tokens[3])
             decoder_inputs4[index_map[i]].append(last_tokens[4])
+            decoder_inputs5[index_map[i]].append(last_tokens[5])
             if (output_len >= 21):
                 outputs0[index_map[i]] = decoder_inputs0[index_map[i]]
                 outputs1[index_map[i]] = decoder_inputs1[index_map[i]]
                 outputs2[index_map[i]] = decoder_inputs2[index_map[i]]
                 outputs3[index_map[i]] = decoder_inputs3[index_map[i]]
                 outputs4[index_map[i]] = decoder_inputs4[index_map[i]]
-    # if is_single:
-    #     outputs0 = outputs0[0]
-    #     outputs1 = outputs1[0]
-    #     outputs2 = outputs2[0]
-    #     outputs3 = outputs3[0]
-    #     outputs4 = outputs4[0]
-    return outputs0, outputs1, outputs2, outputs3, outputs4
+                outputs5[index_map[i]] = decoder_inputs5[index_map[i]]
+    return outputs0, outputs1, outputs2, outputs3, outputs4, outputs5
