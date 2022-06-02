@@ -677,7 +677,7 @@ def decode(model,
             batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
         predicts = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs0), np.asarray(batch_outputs1), np.asarray(batch_outputs2), np.asarray(batch_outputs3), np.asarray(batch_outputs4), np.asarray(batch_outputs5)])
         for i in range(len(predicts[0])):
-            last_tokens = [None, None, None, None, None]
+            last_tokens = [None, None, None, None, None, None]
             for j in range(6):
                 probs = [(prob, j) for j, prob in enumerate(predicts[j][i][-1])]
                 probs.sort(reverse=True)
