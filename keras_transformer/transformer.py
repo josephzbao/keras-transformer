@@ -412,6 +412,57 @@ def get_model(token_num,
     )([decoded_layer, decoder_embed_weights])
     return keras.models.Model(inputs=[encoder_input, decoder_input], outputs=output_layer)
 
+# def get_revised_model(encoder_token_num,
+#                       decoder_token_num1,
+#                       decoder_token_num2,
+#                       decoder_token_num3,
+#                       decoder_token_num4,
+#                       decoder_token_num5,
+#                       decoder_token_num6,
+#                       embed_dim,
+#                       encoder_num,
+#                       head_num,
+#                       hidden_dim,
+#                       attention_activation=None,
+#                       feed_forward_activation=gelu,
+#                       dropout_rate=0.0,
+#                       use_same_embed=False,
+#                       encoder_embed_weights=None,
+#                       embed_trainable=None):
+#     if encoder_embed_weights is not None:
+#         encoder_embed_weights = [encoder_embed_weights]
+#     if not isinstance(embed_trainable, list):
+#         embed_trainable = [embed_trainable, embed_trainable]
+#     encoder_embed_trainable, decoder_embed_trainable = embed_trainable
+#     if encoder_embed_trainable is None:
+#         encoder_embed_trainable = True
+#     encoder_embed_layer = EmbeddingRet(
+#         input_dim=encoder_token_num,
+#         output_dim=embed_dim,
+#         mask_zero=True,
+#         weights=encoder_embed_weights,
+#         trainable=encoder_embed_trainable,
+#         name='Encoder-Token-Embedding',
+#     )
+#     encoder_input = keras.layers.Input(shape=(None,), name='Encoder-Input')
+#     encoder_embed = TrigPosEmbedding(
+#         mode=TrigPosEmbedding.MODE_ADD,
+#         name='Encoder-Embedding',
+#     )(encoder_embed_layer(encoder_input)[0])
+#     encoded_layer = get_encoders(
+#         encoder_num=encoder_num,
+#         input_layer=encoder_embed,
+#         head_num=head_num,
+#         hidden_dim=hidden_dim,
+#         attention_activation=attention_activation,
+#         feed_forward_activation=feed_forward_activation,
+#         dropout_rate=dropout_rate,
+#         trainable=True,
+#     )
+
+
+
+
 def get_multi_output_model(encoder_token_num,
                            decoder_token_num1,
                            decoder_token_num2,
@@ -584,7 +635,7 @@ def get_multi_output_model(encoder_token_num,
         dropout_rate=dropout_rate,
         trainable=trainable,
     )
-    decoded_layer = keras.layers.Dense(30, activation='relu')(decoded_layer)
+    decoded_layer = keras.layers.Dense(1000, activation='relu')(decoded_layer)
     output_layer1 = EmbeddingSim(
         trainable=trainable,
         name='Decoder-Output1',
